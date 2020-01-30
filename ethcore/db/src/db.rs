@@ -269,11 +269,11 @@ impl Writable for DBTransaction {
 
 impl<KVDB: KeyValueDB + ?Sized> Readable for KVDB {
 	fn read<T, R>(&self, col: u32, key: &dyn Key<T, Target = R>) -> Option<T>
-		where T: rlp::Decodable, R: AsRef<[u8]> {
+		where T: rlp::Decodable, R: AsRef<[u8]>
+	{
 		self.get(col, key.key().as_ref())
 			.expect(&format!("db get failed, key: {:?}", key.key().as_ref()))
-			.map(|v| rlp::decode(&v).expect("decode db value failed") )
-
+			.map(|v| rlp::decode(&v).expect(&format!("{:?} could not be rlp decoded; KVDB::read failed", v)))
 	}
 
 	fn exists<T, R>(&self, col: u32, key: &dyn Key<T, Target = R>) -> bool where R: AsRef<[u8]> {
